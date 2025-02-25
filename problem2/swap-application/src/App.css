@@ -107,6 +107,7 @@
 
 #input-2 {
   height: 40px;
+  color: gray;
 }
 
 input:focus, button:focus {
@@ -120,9 +121,44 @@ input:focus, button:focus {
 
 #output-2 {
   height: 40px;
+  color: gray;
+}
+
+.swap-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.swap-button {
+  background-color: #00000000;
+  color: white;
+  border: 1px solid gray;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.swap-button:hover {
+  background-color: gray;
 }
 
 /* TokenSelector */
+
+.close-button {
+  color: white;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+}
 
 .modal-overlay {
   position: fixed;
@@ -137,14 +173,6 @@ input:focus, button:focus {
   z-index: 1000;
 }
 
-.token-selector {
-  background: #222;
-  padding: 20px;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-}
-
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -152,13 +180,23 @@ input:focus, button:focus {
   margin-bottom: 15px;
 }
 
-.close-button {
-  color: white;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0 8px;
+.search-bar {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .token-list {
@@ -168,14 +206,31 @@ input:focus, button:focus {
 
 .token-item {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
+  width: 100%;
+  padding: 8px;
+  gap: 10px;
 }
 
 .token-item:hover {
   background-color: gray;
+}
+
+.token-price {
+  flex-grow: 1;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.token-selector {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
 }
 
 .token-symbol {
