@@ -1,9 +1,11 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import TokenSelector from './components/TokenSelector';
+import ConnectWalletModal from './components/ConnectWalletModal';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState('sell');
   const [sellToken, setSellToken] = useState(null);
   const [buyToken, setBuyToken] = useState(null);
@@ -13,6 +15,11 @@ function App() {
     output1: '',
     output2: ''
   });
+  const [wallet, setWallet] = useState({
+    address: null,
+    tokens: {}
+  });
+  const [notification, setNotification] = useState('');
 
   const handleTokenSelect = (token) => {
     if (selectedType === 'sell') {
@@ -22,19 +29,79 @@ function App() {
     }
   };
 
-  // Swap functionality
   const handleSwap = () => {
-    // Swap input and output values
-    setInputValues((prev) => ({
+    setInputValues(prev => ({
       input1: prev.output1,
       input2: prev.output2,
       output1: prev.input1,
       output2: prev.input2
     }));
-
-    // Swap sellToken and buyToken
     setSellToken(buyToken);
     setBuyToken(sellToken);
+  };
+
+  const handleConnectWallet = (walletData) => {
+    setWallet({
+      address: walletData.address,
+      tokens: { ETH: 1 }
+    });
+    setIsWalletModalOpen(false);
+  };
+
+  const handleConfirmSwap = () => {
+    if (!wallet.address) {
+      setNotification({ type: 'error', message: 'Please connect wallet first!' });
+      return;
+    }
+  
+    if (!sellToken || !buyToken) {
+      setNotification({ type: 'error', message: 'Please select both tokens' });
+      return;
+    }
+  
+    const inputAmount = parseFloat(inputValues.input1);
+    const outputAmount = parseFloat(inputValues.output1);
+  
+    if (isNaN(inputAmount)) {
+      setNotification({ type: 'error', message: 'Invalid input amount' });
+      return;
+    }
+  
+    // Get initial balances
+    const initialSellBalance = wallet.tokens[sellToken.currency] || 0;
+    const initialBuyBalance = wallet.tokens[buyToken.currency] || 0;
+  
+    if (initialSellBalance < inputAmount) {
+      setNotification({ type: 'error', message: 'Insufficient funds!' });
+      return;
+    }
+  
+    // Calculate new balances
+    const newTokens = { ...wallet.tokens };
+    const finalSellBalance = initialSellBalance - inputAmount;
+    const finalBuyBalance = initialBuyBalance + outputAmount;
+  
+    newTokens[sellToken.currency] = finalSellBalance;
+    if (finalSellBalance <= 0) delete newTokens[sellToken.currency];
+    
+    newTokens[buyToken.currency] = finalBuyBalance;
+  
+    setWallet(prev => ({ ...prev, tokens: newTokens }));
+  
+    setNotification({
+      type: 'success',
+      message: 'Transaction succeeded!',
+      details: {
+        sellToken: sellToken.currency,
+        buyToken: buyToken.currency,
+        soldAmount: inputAmount,
+        boughtAmount: outputAmount,
+        fromSell: initialSellBalance.toFixed(4),
+        toSell: finalSellBalance.toFixed(4),
+        fromBuy: initialBuyBalance.toFixed(4),
+        toBuy: finalBuyBalance.toFixed(4)
+      }
+    });
   };
 
   // Calculation effect
@@ -73,7 +140,13 @@ function App() {
         <form onSubmit={(e) => e.preventDefault()}>
           <div id="form-header">
             <h3>Swap</h3>
-            <button id="connect-button">Connect Wallet</button>
+            <button 
+              id="connect-button"
+              type="button"
+              onClick={() => setIsWalletModalOpen(true)}
+            >
+              {wallet.address ? wallet.address.substring(0,8) + "..." : 'Connect Wallet'}
+            </button>
           </div>
           <div className='buy-sell-form'>
             <div className="input-container">
@@ -90,7 +163,7 @@ function App() {
               <input
                 id="input-2"
                 disabled
-                value={"$" + inputValues.input2 || ''}
+                value={inputValues.input2 ? "$" + inputValues.input2 : ''}
               />
             </div>
             <button
@@ -127,7 +200,7 @@ function App() {
               <input
                 id="output-2"
                 disabled
-                value={"$" + inputValues.output2 || ''}
+                value={inputValues.output2 ? "$" + inputValues.output2 : ''}
               />
             </div>
             <button
@@ -140,7 +213,13 @@ function App() {
               {buyToken?.currency || 'Select Token'}
             </button>
           </div>
-          <button id="confirm-button">CONFIRM SWAP</button>
+          <button 
+            id="confirm-button"
+            type="button"
+            onClick={handleConfirmSwap}
+          >
+            CONFIRM SWAP
+          </button>
         </form>
       </div>
       {isModalOpen && (
@@ -149,6 +228,32 @@ function App() {
           onTokenSelect={handleTokenSelect}
           selectedType={selectedType}
         />
+      )}
+
+      {isWalletModalOpen && (
+        <ConnectWalletModal
+          onClose={() => setIsWalletModalOpen(false)}
+          onConnect={handleConnectWallet}
+        />
+      )}
+
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          <div className="notification-content">
+            <strong>{notification.message}</strong>
+            {notification.type === 'success' && (
+              <div className="transaction-details">
+                <p>Sold {notification.details.soldAmount.toFixed(4)} {notification.details.sellToken}</p>
+                <p>{notification.details.sellToken} balance: {notification.details.fromSell} → {notification.details.toSell}</p>
+                <p>Received {notification.details.boughtAmount.toFixed(4)} {notification.details.buyToken}</p>
+                <p>{notification.details.buyToken} balance: {notification.details.fromBuy} → {notification.details.toBuy}</p>
+              </div>
+            )}
+          </div>
+          <button className="close-notification" onClick={() => setNotification(null)}>
+            ×
+          </button>
+        </div>
       )}
     </div>
   );
