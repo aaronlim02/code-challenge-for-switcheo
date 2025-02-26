@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import TokenSelector from './components/TokenSelector';
 import ConnectWalletModal from './components/ConnectWalletModal';
+import Notification from './components/Notification';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +73,10 @@ function App() {
     const initialBuyBalance = wallet.tokens[buyToken.currency] || 0;
   
     if (initialSellBalance < inputAmount) {
-      setNotification({ type: 'error', message: 'Insufficient funds!' });
+      setNotification({ 
+        type: 'error', 
+        message: 'Insufficient funds!',
+        details: 'You only have: ' + initialSellBalance + ' ' + sellToken.currency });
       return;
     }
   
@@ -252,35 +256,12 @@ function App() {
       )}
 
       {notification && (
-        <div className={`notification ${notification.type}`}>
-          <div className="notification-content">
-            <strong>{notification.message}</strong>
-            {notification.type === 'success' && (
-              <div className="transaction-details">
-                <div>
-                  <img
-                    src={`/images/${sellToken.currency}.svg`}
-                    alt=""
-                    className="token-icon">
-                  </img>
-                  <p>→</p>
-                  <img
-                    src={`/images/${buyToken.currency}.svg`}
-                    alt=""
-                    className="token-icon">
-                  </img>
-                </div>
-                <p>Sold {notification.details.soldAmount.toFixed(4)} {notification.details.sellToken}</p>
-                <p>{notification.details.sellToken} balance: {notification.details.fromSell} → {notification.details.toSell}</p>
-                <p>Received {notification.details.boughtAmount.toFixed(4)} {notification.details.buyToken}</p>
-                <p>{notification.details.buyToken} balance: {notification.details.fromBuy} → {notification.details.toBuy}</p>
-              </div>
-            )}
-          </div>
-          <button className="close-notification" onClick={() => setNotification(null)}>
-            ×
-          </button>
-        </div>
+        <Notification 
+          notification={notification} 
+          sellToken={sellToken} 
+          buyToken={buyToken} 
+          onClose={() => setNotification(null)}
+        />
       )}
     </div>
   );

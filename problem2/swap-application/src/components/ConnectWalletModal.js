@@ -18,7 +18,7 @@ const ConnectWalletModal = ({ onClose, onConnect }) => {
           <div className="wallet-item" onClick={handleConnect}>
             <div className="wallet-info">
               <p className="wallet-name">0xSample...</p>
-              <p className="wallet-balance">Contains 1 ETH</p>
+              <p className="wallet-details">Contains 1 ETH</p>
             </div>
           </div>
         </div>
