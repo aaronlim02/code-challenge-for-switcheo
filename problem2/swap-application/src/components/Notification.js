@@ -16,9 +16,9 @@ const Notification = ({ notification, sellToken, buyToken, onClose }) => {
         {notification.type === 'success' && notification.details && (
           <div className="transaction-details">
             <div id="transaction-symbols">
-              <img src={`/images/${sellToken?.currency}.svg`} alt="" className="token-icon" />
+              <img src={`${process.env.PUBLIC_URL}/images/${sellToken?.currency}.svg`} alt="" className="token-icon" />
               <p>→</p>
-              <img src={`/images/${buyToken?.currency}.svg`} alt="" className="token-icon" />
+              <img src={`${process.env.PUBLIC_URL}/images/${buyToken?.currency}.svg`} alt="" className="token-icon" />
             </div>
             <p>Sold {notification.details.soldAmount.toFixed(4)} {notification.details.sellToken}</p>
             <p>{notification.details.sellToken} balance: {notification.details.fromSell} → {notification.details.toSell}</p>

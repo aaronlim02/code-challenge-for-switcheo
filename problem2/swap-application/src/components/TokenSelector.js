@@ -70,7 +70,7 @@ const TokenSelector = ({ onClose, onTokenSelect, selectedType }) => {
               }}
             >
               <img
-                src={`/images/${token.currency}.svg`}
+                src={`${process.env.PUBLIC_URL}/images/${token.currency}.svg`}
                 alt={token.currency}
                 className="token-icon"
                 style={{ width: '32px', height: '32px', objectFit: 'contain' }}

@@ -179,7 +179,7 @@ function App() {
               }}
             >
               {sellToken ? <img
-                src={`/images/${sellToken.currency}.svg`}
+                src={`${process.env.PUBLIC_URL}/images/${sellToken.currency}.svg`}
                 alt=""
                 className="token-icon"
                 style={{ width: '32px', height: '32px', objectFit: 'contain' }}
@@ -223,7 +223,7 @@ function App() {
               }}
             >
               {buyToken ? <img
-                src={`/images/${buyToken.currency}.svg`}
+                src={`${process.env.PUBLIC_URL}/images/${buyToken.currency}.svg`}
                 alt=""
                 className="token-icon"
                 style={{ width: '32px', height: '32px', objectFit: 'contain' }}
