@@ -43,7 +43,7 @@ function App() {
   const handleConnectWallet = (walletData) => {
     setWallet({
       address: walletData.address,
-      tokens: { ETH: 1 }
+      tokens: walletData.tokens
     });
     setIsWalletModalOpen(false);
   };
@@ -166,13 +166,20 @@ function App() {
                 value={inputValues.input2 ? "$" + inputValues.input2 : ''}
               />
             </div>
-            <button
+            <button 
+              className="choose-currency-button"
               type="button"
               onClick={() => {
                 setSelectedType('sell');
                 setIsModalOpen(true);
               }}
             >
+              {sellToken ? <img
+                src={`/images/${sellToken.currency}.svg`}
+                alt=""
+                className="token-icon"
+                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+              /> : ""}
               {sellToken?.currency || 'Select Token'}
             </button>
           </div>
@@ -204,12 +211,19 @@ function App() {
               />
             </div>
             <button
+              className="choose-currency-button"
               type="button"
               onClick={() => {
                 setSelectedType('buy');
                 setIsModalOpen(true);
               }}
             >
+              {buyToken ? <img
+                src={`/images/${buyToken.currency}.svg`}
+                alt=""
+                className="token-icon"
+                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+              /> : ''} 
               {buyToken?.currency || 'Select Token'}
             </button>
           </div>
@@ -218,7 +232,7 @@ function App() {
             type="button"
             onClick={handleConfirmSwap}
           >
-            CONFIRM SWAP
+            Confirm Swap
           </button>
         </form>
       </div>
@@ -243,6 +257,19 @@ function App() {
             <strong>{notification.message}</strong>
             {notification.type === 'success' && (
               <div className="transaction-details">
+                <div>
+                  <img
+                    src={`/images/${sellToken.currency}.svg`}
+                    alt=""
+                    className="token-icon">
+                  </img>
+                  <p>→</p>
+                  <img
+                    src={`/images/${buyToken.currency}.svg`}
+                    alt=""
+                    className="token-icon">
+                  </img>
+                </div>
                 <p>Sold {notification.details.soldAmount.toFixed(4)} {notification.details.sellToken}</p>
                 <p>{notification.details.sellToken} balance: {notification.details.fromSell} → {notification.details.toSell}</p>
                 <p>Received {notification.details.boughtAmount.toFixed(4)} {notification.details.buyToken}</p>

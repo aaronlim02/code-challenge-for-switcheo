@@ -1,6 +1,3 @@
-// components/ConnectWalletModal.js
-import { useState } from 'react';
-
 const ConnectWalletModal = ({ onClose, onConnect }) => {
   const handleConnect = () => {
     // In real implementation, you would connect actual wallet here
